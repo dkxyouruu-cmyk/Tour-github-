@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Upload Media → GitHub Raw</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+<style>
+:root{
+--bg:#000;--text:#fff;--muted:#aaa;
+--primary:#ff0000;--secondary:#AD4AE7;
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
+body{
+background:
+radial-gradient(circle at 20% 20%,rgba(255,255,255,.1),transparent 30%),
+radial-gradient(circle at 80% 10%,rgba(255,255,255,.08),transparent 25%),
+radial-gradient(circle at 50% 90%,rgba(255,255,255,.05),transparent 30%),
+var(--bg);
+color:var(--text);min-height:100vh;padding:20px;
+}
+.container{max-width:1100px;margin:auto}
+
+.profile-wrapper{
+width:150px;height:150px;border-radius:50%;
+margin:0 auto 25px;padding:5px;
+background:linear-gradient(135deg,var(--primary),var(--secondary));
+box-shadow:0 0 25px rgba(173,74,231,.5);
+animation:glow 4s infinite alternate
+}
+.profile-wrapper video{
+width:100%;height:100%;border-radius:50%;object-fit:cover
+}
+@keyframes glow{
+0%{box-shadow:0 0 15px var(--primary)}
+100%{box-shadow:0 0 30px var(--secondary)}
+}
+
+.header{text-align:center;margin-bottom:30px}
+.title{font-family:'Orbitron',sans-serif;font-size:36px;font-weight:800}
+.subtitle{color:var(--muted)}
+
+.section{
+background:rgba(255,255,255,.05);
+backdrop-filter:blur(15px);
+border:1px solid rgba(255,255,255,.15);
+border-radius:18px;padding:28px;
+margin-bottom:30px;position:relative
+}
+.section::before{
+content:'';position:absolute;top:0;left:0;right:0;height:3px;
+background:linear-gradient(90deg,var(--primary),var(--secondary))
+}
+
+.section-title{
+font-family:'Orbitron',sans-serif;
+font-size:22px;margin-bottom:20px;
+display:flex;align-items:center;gap:10px
+}
+
+.label{margin-bottom:8px;font-weight:600;color:#ddd}
+.input{
+width:100%;padding:12px;
+background:rgba(255,255,255,.08);
+border:1px solid rgba(255,255,255,.2);
+border-radius:12px;color:#fff;margin-bottom:10px
+}
+
+.hint{font-size:13px;color:#888;margin-bottom:15px}
+
+.btn{
+width:100%;padding:14px;
+background:linear-gradient(135deg,var(--primary),var(--secondary));
+border:none;border-radius:12px;
+color:#fff;font-weight:bold;cursor:pointer
+}
+
+.loading{
+display:none;margin-top:15px;
+color:var(--secondary);text-align:center
+}
+
+/* ===== PROGRESS BAR ===== */
+.progress-wrap{
+display:none;
+margin-top:15px;
+background:rgba(255,255,255,.1);
+border-radius:12px;
+overflow:hidden;
+height:14px
+}
+.progress-bar{
+height:100%;
+width:0%;
+background:linear-gradient(90deg,var(--primary),var(--secondary));
+transition:width .2s
+}
+
+.result-area{display:none}
+.result-area a{
+word-break:break-all;color:#00ff88;font-weight:bold
+}
+
+.info ul{margin-left:20px}
+.info li{margin-bottom:8px}
+
+.note{
+margin-top:15px;
+background:rgba(173,74,231,.1);
+border-left:4px solid #fff900;
+padding:15px;border-radius:8px
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<div class="profile-wrapper">
+<video src="https://raw.githubusercontent.com/Alifkece/media/main/uploads/1767004292023_downloadfile.mp4" autoplay loop muted playsinline></video>
+</div>
+
+<div class="header">
+<h1 class="title">GitHub Raw Upload</h1>
+<p class="subtitle">Powered By Lenzyxrzz</p>
+</div>
+
+<div class="section">
+<h2 class="section-title"><i class="fas fa-upload"></i> Upload Media</h2>
+
+<label class="label"><i class="fas fa-file"></i> File</label>
+<input type="file" id="file" class="input">
+
+<div class="hint">Upload file untuk dijadikan URL raw GitHub</div>
+
+<button class="btn" onclick="uploadFile()">
+<i class="fas fa-cloud-upload-alt"></i> Upload ke GitHub
+</button>
+
+<div class="loading" id="loading">
+<i class="fas fa-spinner fa-spin"></i> Uploading...
+</div>
+
+<div class="progress-wrap" id="progressWrap">
+<div class="progress-bar" id="progressBar"></div>
+</div>
+</div>
+
+<div class="section result-area" id="resultArea">
+<h2 class="section-title"><i class="fas fa-link"></i> Raw URL</h2>
+<a id="rawUrl" target="_blank"></a>
+<button class="btn" style="margin-top:15px" onclick="copyUrl()">
+<i class="fas fa-copy"></i> Copy URL
+</button>
+<div class="hint" id="copyStatus" style="display:none;color:#00ff88;margin-top:10px">
+URL berhasil disalin
+</div>
+</div>
+
+<div class="section info">
+<h2 class="section-title"><i class="fas fa-info-circle"></i> Cara Menggunakan</h2>
+<ul>
+<li>Pilih file media</li>
+<li>Klik Upload</li>
+<li>Lihat progress upload</li>
+<li>Salin URL raw GitHub</li>
+</ul>
+<div class="note">
+<b>Catatan:</b> Jangan upload media porno dan konten kekerasan yaa guys.
+</div>
+</div>
+
+</div>
+
+<script>
+// ===== GANTI INI AJA =====
+const GITHUB_TOKEN = "TOKEN_LU_TEMPEL_DISINI";
+const OWNER = "NAMA_GITHUB_LU";
+const REPO = "REPOSITORY_LU";
+const BRANCH = "main"; //ini gak usah di ubah
+const FOLDER = "uploads"; //ini diemin
+// =========================
+
+const loading = document.getElementById('loading');
+const resultArea = document.getElementById('resultArea');
+const rawUrl = document.getElementById('rawUrl');
+const copyStatus = document.getElementById('copyStatus');
+const progressWrap = document.getElementById('progressWrap');
+const progressBar = document.getElementById('progressBar');
+
+function uploadFile(){
+const file = document.getElementById('file').files[0];
+if(!file) return alert('Pilih file dulu');
+
+loading.style.display='block';
+progressWrap.style.display='block';
+progressBar.style.width='0%';
+resultArea.style.display='none';
+copyStatus.style.display='none';
+
+const reader = new FileReader();
+reader.onload = () => {
+const base64 = reader.result.split(',')[1];
+const path = `${FOLDER}/${Date.now()}_${file.name}`;
+
+const xhr = new XMLHttpRequest();
+xhr.open('PUT', `https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}`);
+xhr.setRequestHeader('Authorization', `Bearer ${GITHUB_TOKEN}`);
+xhr.setRequestHeader('Content-Type', 'application/json');
+
+xhr.upload.onprogress = (e)=>{
+if(e.lengthComputable){
+const percent = Math.round((e.loaded/e.total)*100);
+progressBar.style.width = percent+'%';
+}
+};
+
+xhr.onload = ()=>{
+loading.style.display='none';
+if(xhr.status !== 201){
+alert('Upload gagal');
+return;
+}
+const url = `https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}/${path}`;
+rawUrl.href = url;
+rawUrl.textContent = url;
+rawUrl.dataset.url = url;
+resultArea.style.display='block';
+};
+
+xhr.send(JSON.stringify({
+message:'upload via web',
+content:base64,
+branch:BRANCH
+}));
+};
+reader.readAsDataURL(file);
+}
+
+function copyUrl(){
+const url = rawUrl.dataset.url;
+navigator.clipboard.writeText(url).then(()=>{
+copyStatus.style.display='block';
+setTimeout(()=>copyStatus.style.display='none',2000);
+});
+}
+</script>
+
+</body>
+</html>
